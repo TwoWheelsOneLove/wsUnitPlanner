@@ -1,0 +1,19 @@
+{
+  "name": "unitplanner",
+  "version": "1.0.0",
+  "description": "A unit planning api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "initsql": "mysql -u root -p < sql_initialise.sql"
+  },
+  "author": "Dan Lincoln",
+  "license": "ISC",
+
+  "dependencies": {
+  "express": "^4.16.2",
+  "mysql": "^2.15.0"
+
+  }
+}

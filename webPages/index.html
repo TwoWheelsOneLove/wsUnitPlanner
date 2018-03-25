@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+  <title>Planit.</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="index.js"></script>
+</head>
+
+<header>
+  <h3> PLANIT. </h3>
+
+  <input name="unitQuery" id="search" type="text" autofocus placeholder="Search Existing Units"></input>
+  <button id="searchUnits"><i class="material-icons">search</i></button>
+
+  <button id="addUnit">
+    <i class="material-icons">add_circle</i>
+  </button>
+
+  <button id="home">
+    <i class="material-icons">home</i>
+  </button>
+
+
+</header>
+
+
+<main id="main">
+</main>
+
+<div id="createUnit">
+  <h2>Create a new Unit</h2>
+  <input id="creatorName" type="text" placeholder="Creator Name" maxlength="30"></input>
+  <input id="unitName" type="text" placeholder="Unit Name" maxlength="30"></input>
+  <select id="unitWeeks" name="weeks" placeholder="Number of weeks">
+    <option value="6">6 Weeks</option>
+    <option value="12">12 Weeks</option>
+    <option value="24">24 Weeks</option>
+  </select>
+  <button id="submitNewUnit">Create Unit</button>
+</div>
+
+<div id="unitEditor">
+  <section id="unitSettings">
+    <button id="gridView">
+      <i class="material-icons">grid_on</i>
+    </button>
+
+    <button id="saveChanges">
+      <i class="material-icons">save</i>
+    </button>
+
+  </section>
+
+  <section id="unitDetails">
+    <label> Creator : </label>
+    <p id="editAuthor"></p>
+
+    <label> Title : </label>
+    <input type="text" id="editTitle"></input>
+
+  </section>
+</div>
