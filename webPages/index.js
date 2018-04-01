@@ -30,9 +30,15 @@ function openUnitCreator(){
 
 
 //opens the unit editor with the details parsed
-function openUnitEditor(unit){
+async function openUnitEditor(unit){
   window.addUnit.setAttribute("style", "display: none;");
   window.home.setAttribute("style", "display: block;");
+  let weekContainer = document.getElementById("weeks");
+  let sandbox = document.getElementById('sandbox');
+  weekContainer.innerHTML = "";
+  weekContainer.textContent = "";
+  sandbox.innerHTML ="";
+  sandbox.textContent = "";
 
   let saveBtn = document.getElementById("saveChanges").children[0];
   saveBtn.dataset.id = unit.id;
@@ -47,12 +53,72 @@ function openUnitEditor(unit){
   authorField.textContent = unit.author;
   titleField.value = unit.title;
 
+  let weeks = await getWeeks(unit.id);
+
+  //get content that isnt currently in a unit
+  let unitContent = await getUnitContent(unit.id);
+  console.log(unitContent);
+
+
+  unitContent.forEach((content) =>{
+    if (!content.weekId){
+      const newContent = document.createElement('div');
+      newContent.classList.add('content');
+      newContent.textContent = "Content ID: " + content.id + " Content type:   " + content.contentType + "    Unit ID " + content.unitId + "Week ID " + content.weekId;
+      sandbox.appendChild(newContent);
+    }
+  })
+
+
+  for (let week of weeks){
+    let weekContent = await getWeekContent(week.id);
+
+    const newWeek = document.createElement('section');
+    newWeek.classList.add('week');
+    newWeek.textContent = "  Week ID: " + week.id + "   Week Num: " + week.weekNum + "   Title: " + week.weekTitle;
+    weekContainer.appendChild(newWeek);
+
+    weekContent.forEach((content) =>{
+      let contentBox = document.createElement('div');
+      contentBox.classList.add('weekContent');
+      contentBox.textContent = "Content ID: " + content.id + " Content type:   " + content.contentType + "    Unit ID " + content.unitId + "Week ID " + content.weekId;
+      newWeek.appendChild(contentBox);
+    })
+
+  }
 }
 
 
-
-
 //API OPERATIONS
+
+async function getUnitContent(id){
+  try{
+  let url = '/api/weekContent';
+  url += '?unitId=' + encodeURIComponent(id);
+  const response = await fetch(url);
+
+  if (!response.ok) throw response;
+    let content = await response.json();
+    return content;
+  } catch (e) {
+    console.error('error getting content details', e);
+  }
+}
+
+async function getWeekContent(id){
+  try{
+  let url = '/api/weekContent';
+  url += '?weekId=' + encodeURIComponent(id);
+  const response = await fetch(url);
+
+  if (!response.ok) throw response;
+    let content = await response.json();
+    return content;
+  } catch (e) {
+    console.error('error getting content details', e);
+  }
+}
+
 async function saveUnit(e){
   console.log(e.target);
   let newTitle = document.getElementById('editTitle').value;
@@ -153,8 +219,24 @@ function displayUnits(units){
         console.error('error getting unit details', e);
       }
 
-
   }
+
+  async function getWeeks(unitID){
+    try{
+      let url = '/api/weeks';
+      url += '?id=' + encodeURIComponent(unitID);
+
+
+      const response = await fetch(url);
+
+      if (!response.ok) throw response;
+        let weeks = await response.json();
+        return weeks;
+      } catch (e) {
+        console.error('error getting weeks', e);
+      }
+    }
+
 
   async function submitUnit(){
     const userName = document.getElementById("creatorName");

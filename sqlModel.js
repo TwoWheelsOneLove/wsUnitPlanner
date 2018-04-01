@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+
 const mysql = require('mysql');
 
 const config = require('./config');
@@ -42,6 +42,62 @@ module.exports.listUnits = (search, unitId) => {
     });
   });
 };
+
+module.exports.listContent = (unitId, weekId) => {
+  return new Promise((resolve, reject) => {
+      let query;
+
+      if (unitId){
+        query = 'SELECT * from content WHERE unitId=' + sql.escape(unitId);
+      }
+
+      if (weekId){
+        query = 'SELECT * from content WHERE weekId=' + sql.escape(weekId);
+      }
+
+      sql.query(query, (err,data) =>{
+        if (err) {
+          reject(['failed to run the query', err]);
+          return;
+        }
+
+        const retval = [];
+         data.forEach((row)=>{
+           retval.push({
+             id: row.id,
+             contentType: row.contentType,
+             unitId: row.unitId,
+             weekId: row.weekId,
+           });
+         });
+
+         resolve(retval);
+      })
+  });
+}
+
+module.exports.listWeeks = (id) => {
+  return new Promise((resolve, reject) => {
+    sql.query(sql.format('SELECT id, weekNum, weekTitle, unitId from week WHERE unitId=?', [id]),(err,data)=> {
+      if (err) {
+        reject(['Failed to query weeks', err]);
+        return;
+      }
+
+      const retval = [];
+       data.forEach((row)=>{
+         retval.push({
+           id: row.id,
+           weekTitle: row.weekTitle,
+           weekNum: row.weekNum,
+           unitId: row.unitId,
+         });
+       });
+
+       resolve(retval);
+    })
+  });
+}
 
 module.exports.deleteUnit = (id) => {
   return new Promise((resolve, reject) => {

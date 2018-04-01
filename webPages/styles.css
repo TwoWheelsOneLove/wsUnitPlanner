@@ -169,6 +169,7 @@ main .unit {
   grid-template-columns: 2fr 6fr;
   grid-row-gap: 1em;
   box-shadow: 0px 2px 10px rgba(40,0,0, 0.4);
+  z-index: 2;
 }
 
 #unitDetails input{
@@ -184,6 +185,38 @@ main .unit {
   border: dashed #00abff thin;
 }
 
+
+#weekEditor {
+  display:grid;
+  margin-top: .5em;
+  grid-template-columns: 1fr 1fr;
+  z-index: 0;
+  height: 75%;
+}
+
+#weeks {
+  padding: 1em;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.week {
+  margin: 1em auto 1em auto;
+  width: 85%;
+  padding: 1em;
+  overflow: hidden;
+  background-color: white;
+  color: #00abff;
+  box-shadow: 0px 2px 10px rgba(40,0,0, 0.4);
+}
+
+.unitContent {
+
+}
+
+.weekContent {
+  
+}
 
 
 

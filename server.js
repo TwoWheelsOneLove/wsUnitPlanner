@@ -14,6 +14,8 @@ app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url);
 
 //api stuffs
 app.get('/api/units', sendUnits);
+app.get('/api/weeks', sendWeeks);
+app.get('/api/weekContent', sendContent);
 app.delete('/api/units/:id', deleteUnit);
 app.post('/api/units', createUnit);
 app.put('/api/units', updateUnit);
@@ -30,6 +32,25 @@ app.listen(8080, (err) => {
 
 
 //server functionality
+
+async function sendWeeks(req,res){
+  try {
+    const weeks = await db.listWeeks(req.query.id);
+    res.json(weeks);
+  }catch(e){
+    error(res,e);
+  }
+}
+
+async function sendContent(req, res){
+  try{
+    const content = await db.listContent(req.query.unitId, req.query.weekId);
+    console.log(content);
+    res.json(content);
+  }catch (e){
+    error(res,e);
+  }
+}
 
 async function sendUnits(req, res){
 
