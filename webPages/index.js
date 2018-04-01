@@ -1,4 +1,5 @@
 window.addEventListener('load', initialize);
+let dragged;
 
 function initialize(){
   window.searchUnits.addEventListener('click', loadUnits);
@@ -6,7 +7,35 @@ function initialize(){
   window.home.addEventListener('click', showSearchResults);
   document.getElementById('submitNewUnit').addEventListener('click', submitUnit);
   document.getElementById("saveChanges").addEventListener('click', saveUnit);
+
+  //removes default drag over behaviour
+  let sandbox = document.getElementById("sandbox")
+
+  sandbox.addEventListener("dragover", (e) => {
+	e.preventDefault();
+  });
+
+  sandbox.addEventListener("drop", contentDropped);
   loadUnits();
+}
+
+
+
+//DRAG DROP OPERATIONS
+
+function contentDrag(e){
+  dragged = e.target;
+  dragged.style.opacity = 0.5;
+}
+
+function contentDragEnd(e){
+  dragged = e.target;
+  dragged.style.opacity = 1;
+}
+
+function contentDropped(e){
+  dragged.parentNode.removeChild(dragged);
+  event.target.appendChild(dragged);
 }
 
 //USER INTERFACE OPERATIONS
@@ -63,9 +92,12 @@ async function openUnitEditor(unit){
   unitContent.forEach((content) =>{
     if (!content.weekId){
       const newContent = document.createElement('div');
-      newContent.classList.add('content');
+      newContent.classList.add('unitContent');
+      newContent.draggable = true;
       newContent.textContent = "Content ID: " + content.id + " Content type:   " + content.contentType + "    Unit ID " + content.unitId + "Week ID " + content.weekId;
       sandbox.appendChild(newContent);
+      newContent.addEventListener("dragstart", contentDrag);
+      newContent.addEventListener("dragend", contentDragEnd);
     }
   })
 
@@ -75,14 +107,27 @@ async function openUnitEditor(unit){
 
     const newWeek = document.createElement('section');
     newWeek.classList.add('week');
+
+    //removes default drag over behaviour
+    newWeek.addEventListener("dragover", (e) => {
+  	e.preventDefault();
+    });
+
     newWeek.textContent = "  Week ID: " + week.id + "   Week Num: " + week.weekNum + "   Title: " + week.weekTitle;
     weekContainer.appendChild(newWeek);
+    weekContainer.addEventListener("drop", contentDropped);
+
 
     weekContent.forEach((content) =>{
       let contentBox = document.createElement('div');
       contentBox.classList.add('weekContent');
+      contentBox.draggable = true;
+
       contentBox.textContent = "Content ID: " + content.id + " Content type:   " + content.contentType + "    Unit ID " + content.unitId + "Week ID " + content.weekId;
       newWeek.appendChild(contentBox);
+
+      contentBox.addEventListener("dragstart", contentDrag);
+      contentBox.addEventListener("dragend", contentDragEnd);
     })
 
   }
