@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "initsql": "mysql -u root -p < sql_initialise.sql"
+    "initsql": "mysql -u root -p < sql_initialise.sql",
+    "dashboard": "node server"
   },
   "author": "Dan Lincoln",
   "license": "ISC",

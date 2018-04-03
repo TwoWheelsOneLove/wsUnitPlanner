@@ -12,83 +12,87 @@ const app = express();
 //logging
 app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
 
-//api stuffs
-app.get('/api/units', sendUnits);
-app.get('/api/weeks', sendWeeks);
-app.get('/api/weekContent', sendContent);
-app.delete('/api/units/:id', deleteUnit);
-app.post('/api/units', createUnit);
-app.put('/api/units', updateUnit);
-
 //static file
 app.use('/', express.static(config.webpages, { extensions: ['html'] }));
 
+//API REQUEST HANDLING
+//Return all units
+app.get('/api/units', sendUnits);
 
-// start server
-app.listen(8080, (err) => {
+//return weeks by Unit id
+app.get('/api/weeks', sendWeeks);
+
+//return content by week or unit id
+app.get('/api/weekContent', sendContent);
+
+//delete unit by id
+app.delete('/api/units/:id', deleteUnit);
+
+//delete content by id
+app.delete('/api/content/:id', deleteContent);
+
+//upload a new unit
+app.post('/api/units', createUnit);
+
+//upload new content
+app.post('/api/content', addContent);
+
+//update unit details
+app.put('/api/units', updateUnit);
+
+//update content location/fields
+app.put('/api/content', updateContent);
+
+// START SERVER
+app.listen(config.port, (err) => {
   if (err) console.error('error starting server', err);
   else console.log('server started successfully');
 });
 
 
-//server functionality
-
+//API FUNCTIONS
 async function sendWeeks(req,res){
-  try {
     const weeks = await db.listWeeks(req.query.id);
     res.json(weeks);
-  }catch(e){
-    error(res,e);
-  }
 }
 
 async function sendContent(req, res){
-  try{
     const content = await db.listContent(req.query.unitId, req.query.weekId);
     console.log(content);
     res.json(content);
-  }catch (e){
-    error(res,e);
-  }
 }
 
 async function sendUnits(req, res){
-
-  try{
     const units = await db.listUnits(req.query.search, req.query.id);
     res.json(units);
-  }catch(e){
-
-    error(res,e);
-  }
 }
 
 async function deleteUnit(req, res) {
-  try {
     await db.deleteUnit(req.params.id);
     res.sendStatus(200);
-  } catch (e) {
-    if (e.status === 'gone') {
-      res.sendStatus(410); // already gone
-    } else {
-      error(res, e);
-    }
-  }
+}
+
+async function deleteContent(req, res){
+    await db.deleteContent(req.params.id);
+    res.sendStatus(200);
+}
+
+async function updateContent(req, res){
+    const retval = await db.updateContent(req.query.contentId, req.query.newWeekId, req.query.note, req.query.leader, req.query.topicTitle, req.query.topicDesc, req.query.resource);
+    res.json(retval);
 }
 
 async function updateUnit(req, res){
-  try{
     const retval = await db.updateUnit(req.query.id, req.query.title);
-
     res.json(retval);
-  }catch(e){
-    error(res, e);
-  }
+}
 
+async function addContent(req, res){
+    const retval = await db.addContent(req.query.id, req.query.type);
+    res.json(retval);
 }
 
 async function createUnit(req, res){
-  try {
     const retval = await db.addUnit(req.query.title, req.query.author);
 
     for(let i = 0; i < req.query.weeks; i++){
@@ -96,21 +100,6 @@ async function createUnit(req, res){
       console.log(week);
     }
 
-    if (req.accepts('html')) {
-      // browser will return back to the search page
-      res.redirect(303, '/#' + retval.id);
-    } else {
-      // request that accepts JSON will instead get the data
-      res.json(retval);
-    }
-  } catch (e) {
-    error(res, e);
-  }
-
-
-}
-
-function error(res, msg) {
-  res.sendStatus(500);
-  console.error(msg);
+    // browser will return back to the homepage
+    res.redirect(303, '/#');
 }

@@ -11,6 +11,8 @@ module.exports.mysql = {
   database: 'unitPlanner',
   // socketPath: '/tmp/mysql.sock', // uncomment this when testing with local non-networked mysql
 };
+//Server port
+module.exports.port = 8080;
 
 // constants for directories
 module.exports.webpages = path.join(__dirname, '/webPages/');

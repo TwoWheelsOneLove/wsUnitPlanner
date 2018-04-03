@@ -68,6 +68,11 @@ module.exports.listContent = (unitId, weekId) => {
              contentType: row.contentType,
              unitId: row.unitId,
              weekId: row.weekId,
+             leader: row.leader,
+             notes: row.notes,
+             topicTitle: row.topicTitle,
+             topicDesc: row.topicDesc,
+             resourceLink: row.resourceLink,
            });
          });
 
@@ -99,9 +104,27 @@ module.exports.listWeeks = (id) => {
   });
 }
 
+module.exports.deleteContent = (id) => {
+return new Promise((resolve, reject) => {
+  sql.query(sql.format('DELETE FROM content WHERE id=?', [id]), (err) => {
+      if (err) {
+        reject(['failed sql delete', err]);
+        return;
+      }
+    });
+
+    resolve();
+  })
+}
+
 module.exports.deleteUnit = (id) => {
   return new Promise((resolve, reject) => {
-
+    sql.query(sql.format('DELETE FROM content WHERE unitId=?', [id]), (err) => {
+        if (err) {
+          reject(['failed sql delete', err]);
+          return;
+        }
+      });
 
       sql.query(sql.format('DELETE FROM week WHERE unitId=?', [id]), (err) => {
           if (err) {
@@ -109,6 +132,7 @@ module.exports.deleteUnit = (id) => {
             return;
           }
         });
+
 
         sql.query(sql.format('DELETE FROM unit WHERE id=?', [id]), (err) => {
             if (err) {
@@ -122,21 +146,92 @@ module.exports.deleteUnit = (id) => {
   };
 
 
-  module.exports.updateUnit = (unitId, title) =>{
+  module.exports.updateContent = (contentId, weekId, note, leader, topicTitle,topicDesc,resourceLink)=>{
     return new Promise((resolve,reject) =>{
 
+      if(resourceLink){
+        sql.query(sql.format('UPDATE content SET resourceLink=? WHERE id=?',[resourceLink, contentId]), (err, result) =>{
+          if (err) {
+            reject(['failed sql update', err]);
+            return;
+          }
+        })
+            resolve();
+      }
 
+
+      if(topicDesc){
+        sql.query(sql.format('UPDATE content SET topicDesc=? WHERE id=?',[topicDesc, contentId]), (err, result) =>{
+          if (err) {
+            reject(['failed sql update', err]);
+            return;
+          }
+        })
+            resolve();
+      }
+
+      if(topicTitle){
+        sql.query(sql.format('UPDATE content SET topicTitle=? WHERE id=?',[topicTitle, contentId]), (err, result) =>{
+          if (err) {
+            reject(['failed sql update', err]);
+            return;
+          }
+        })
+            resolve();
+      }
+
+      if(note){
+        sql.query(sql.format('UPDATE content SET notes=? WHERE id=?',[note, contentId]), (err, result) =>{
+
+          if (err) {
+            reject(['failed sql update', err]);
+            return;
+          }
+        })
+            resolve();
+      }
+
+      if(leader){
+        sql.query(sql.format('UPDATE content SET leader=? WHERE id=?',[leader, contentId]), (err, result) =>{
+
+          if (err) {
+            reject(['failed sql update', err]);
+            return;
+          }
+        })
+            resolve();
+      }
+
+      if(weekId){
+              if(weekId == "null"){
+                sql.query(sql.format('UPDATE content SET weekId=null WHERE id=?',[contentId]), (err, result) =>{
+
+                  if (err) {
+                    reject(['failed sql update', err]);
+                    return;
+                  }
+                })
+              }else{
+              sql.query(sql.format('UPDATE content SET weekId=? WHERE id=?',[weekId, contentId]), (err, result) =>{
+                if (err) {
+                  reject(['failed sql update', err]);
+                  return;
+                }
+              })
+        }
+            resolve();
+      }
+    })
+  }
+
+  module.exports.updateUnit = (unitId, title) =>{
+    return new Promise((resolve,reject) =>{
       sql.query(sql.format('UPDATE unit SET title=? WHERE id=?',[title, unitId]), (err, result) =>{
-
         if (err) {
           reject(['failed sql insert', err]);
           return;
         }
-
       resolve({ id: unitId, title: title});
-
-
-
       })
     })
   }
@@ -154,24 +249,31 @@ module.exports.addUnit = (title, author) => {
           return;
         }
         resolve({ id: result.insertId, title: dbRecord.title, author: dbRecord.author});
-
-
       });
   });
 };
 
+
+module.exports.addContent = (unitId, type)=>{
+return new Promise((resolve,reject) =>{
+  sql.query(sql.format('INSERT INTO content (contentType, unitId) values (?, ?)', [type,unitId]), (err, result) => {
+      if (err) {
+        reject(['failed sql insert', err]);
+        return;
+      }
+      resolve();
+    });
+  })
+}
+
 module.exports.createWeek = (weekNum, unitId) => {
   return new Promise((resolve,reject) =>{
-
-
     sql.query(sql.format('INSERT INTO week (weekNum, unitId) values (?, ?)', [weekNum, unitId]), (err, result) => {
         if (err) {
           reject(['failed sql insert', err]);
           return;
         }
         resolve({ weekId: result.insertId, weekNum: weekNum, unitId: unitId});
-
-
       });
   });
 };
