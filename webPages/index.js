@@ -405,7 +405,6 @@ async function updateContentLocation(content, dropLocation){
 
 //save unit details
 async function saveUnit(e){
-  console.log(e.target);
   let newTitle = document.getElementById('editTitle').value;
 
   let url = '/api/units';
@@ -474,7 +473,6 @@ async function loadUnits(){
       if (!response.ok) throw response;
         let unit = await response.json();
         unit = unit[0];
-        console.log(unit);
 
         openUnitEditor(unit);
       } catch (e) {

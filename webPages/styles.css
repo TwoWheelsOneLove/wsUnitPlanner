@@ -212,14 +212,14 @@ main .unit {
 }
 
 #weeks {
-  padding: 1em 1em 3em 1em;
+  padding: 1em 1em 5em 1em;
   overflow-y: scroll;
   position: relative;
 
 }
 
 #sandbox {
-  padding: 1em;
+  padding: 1em 1em 5em 1em;
   overflow-y: scroll;
   position: relative;
   display: grid;

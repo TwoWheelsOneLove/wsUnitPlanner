@@ -58,7 +58,6 @@ async function sendWeeks(req,res){
 
 async function sendContent(req, res){
     const content = await db.listContent(req.query.unitId, req.query.weekId);
-    console.log(content);
     res.json(content);
 }
 
@@ -97,7 +96,6 @@ async function createUnit(req, res){
 
     for(let i = 0; i < req.query.weeks; i++){
       const week = await db.createWeek(i+1,retval.id);
-      console.log(week);
     }
 
     // browser will return back to the homepage

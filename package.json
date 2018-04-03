@@ -9,6 +9,10 @@
     "initsql": "mysql -u root -p < sql_initialise.sql",
     "dashboard": "node server"
   },
+  "repository" :{
+    "type" : "git",
+    "url" : "https://github.com/TwoWheelsOneLove/wsUnitPlanner"
+  },
   "author": "Dan Lincoln",
   "license": "ISC",
 
